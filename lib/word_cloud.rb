@@ -1,33 +1,23 @@
 class WordCloud
+
   def initialize(input)
     @input = input
   end
 
   def clean_data
-    word_array = []
-    @input.each do |k, v|
-      v.each do |words|
-        word_array << words.split(" ")
+    output_hash = {}
+    @input.each do |name, lines|
+      words = lines.map { |word| word.split(" ") }
+      words.flatten.each do |word|
+        if output_hash.has_key?(word.downcase)
+          output_hash[word.downcase][:count] += 1
+          output_hash[word.downcase][:people] << name unless output_hash[word.downcase][:people].include?(name)
+        else
+          output_hash[word.downcase] = {count: 1, people: [name]}
+        end
       end
     end
-    one_words = []
-    word_array.each do |words|
-      words.each do |word|
-        one_words << word
-      end
-    end
-    h = Hash.new
-    one_words.each { |w|
-      if h.has_key?(w)
-        h[w] = h[w] + 1
-      else
-        h[w] = 1
-      end
-    }
-    final_hash = Hash.new
-    h.each do |k, v|
-      final_hash[k.downcase] = {:count => v, :people => 'NONE'}
-    end
-    final_hash
+    output_hash
   end
+
 end
